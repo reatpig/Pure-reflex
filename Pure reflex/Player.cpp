@@ -1,64 +1,55 @@
 #include "Player.h"
 #include "Map.h"
-Player::Player()
+#include "SkillManager.h"
+Player::Player(bool isControllable)
 {
+	this->isControllable = isControllable;
+
 	sprite.setSize({ 15,15 });
 	sprite.setFillColor(sf::Color::Red);
 	sprite.setPosition({ WIDTH/2,HEIGHT/2 });
+
 	target={ WIDTH / 2,HEIGHT / 2 };
+
 }
-
-
+void Player::setBlue()
+{
+	sprite.setFillColor(sf::Color::Blue);
+}
+//TODO send to map
 void Player::update(float time,Map &map,sf::RenderWindow &window)
 {
 	static int teamId = 0;
 	team = teamId;
 	teamId++;
 	float speed_y=0,speed_x=0;
-	for (auto iter = allSkills.begin(); iter != allSkills.end();) {
-		
-		if (!(*iter)->update(*this, time))
-			iter = allSkills.erase(iter);
-		else {
-			iter++;
-		}
-	}
-	//if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-	//{
-	//	target = sf::Vector2f(sf::Mouse::getPosition(window));
-	//}
-	/*sf::Vector2f dif = target - sprite.getPosition();
-	if (dif != sf::Vector2f{ 0,0 }) {
-		dif = dif / sqrtf(pow(dif.x, 2) + pow(dif.y, 2));
-		speed_x = dif.x;
-		speed_y = dif.y;
-	}*/
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) ){
-		sf::Vector2f mouse = sf::Vector2f( sf::Mouse::getPosition(window))-sprite.getPosition();
-		allSkills.push_back(new Spliter(*this,mouse));
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		speed_x = -1;
-	
-	}
-		//sprite.move({ -1 * time,0 * time });
-	 if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-	 {
-		 speed_x = 1;
-		
-	 }
-			//sprite.move({ 1 * time,0 * time });
-	 if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		
-		 speed_y = -1;
-	 }
-			//	sprite.move({ 0 * time,-1 * time });
-	 if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+	if (isControllable) {
+		sf::Vector2f mouse = sf::Vector2f(sf::Mouse::getPosition(window)) - sprite.getPosition();
+		SkillManager::addSkills(mouse, this);
 
-		 speed_y = 1;
-	 }
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+			speed_x = -1;
+
+		}
+		//sprite.move({ -1 * time,0 * time });
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		{
+			speed_x = 1;
+
+		}
+		//sprite.move({ 1 * time,0 * time });
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+
+			speed_y = -1;
+		}
+		//	sprite.move({ 0 * time,-1 * time });
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+
+			speed_y = 1;
+		}
 		//sprite.move({ 0* time,1 * time });
 
+	}
 	 auto rect_hero = sprite.getPosition();
 	 auto top = sprite.getPosition().y ;
 	 auto left = sprite.getPosition().x ;

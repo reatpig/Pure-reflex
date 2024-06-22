@@ -13,7 +13,31 @@ Map::Map()
 
 }
 
-void Map::display(sf::RenderWindow& window, Player& player)
+void Map::createPlayer()
+{
+	static bool f = true;
+	//TODO erase
+	if (f){
+		std::shared_ptr<Player> ptr(new Player);
+	allPlayers.push_back(ptr);
+	f = false;
+}
+	else {
+		std::shared_ptr<Player> ptr(new Player(false));
+		allPlayers.push_back(ptr);
+	}
+}
+
+void Map::update(float time, sf::RenderWindow& window)
+{
+	SkillManager::updateAllSkills(time);
+	for (auto player : allPlayers) {
+		player->update(time,*this, window);
+	}
+	display(window);
+}
+
+void Map::display(sf::RenderWindow& window)
 {
 	window.clear(sf::Color::White);
 	sf::RectangleShape rectangle;
@@ -28,9 +52,13 @@ void Map::display(sf::RenderWindow& window, Player& player)
 			rectangle.setPosition(r * 32, i * 32);
 			window.draw(rectangle);
 		}
-	for (auto& skill : player.allSkills)
-		window.draw(skill->draw());
-	window.draw(player.getSprite());
+
+	SkillManager::drawAllSkills(window);
+	SkillManager::skillKill(allPlayers);
+
+	for (auto player : allPlayers) {
+		window.draw(player->getSprite());
+	}
 	window.display();
 }
 

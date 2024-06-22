@@ -1,12 +1,15 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 #include "Map.h"
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "SFML works!");
-    Player player;
+
     sf::Clock clock;
     Map map;
+    map.createPlayer();
+    map.createPlayer();
     while (window.isOpen())
     {
        
@@ -20,8 +23,8 @@ int main()
         float time = clock.restart().asMicroseconds()/2000.;
         if (time > 1000)
             time = 1000;
-        player.update(time,map,window);
-        map.display(window,player);
+        map.update(time, window);
+        map.display(window);
       
     }
 
